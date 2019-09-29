@@ -1,0 +1,290 @@
+一、终端操作数据库
+
+1、登录数据库服务器
+mysql -uroot -p123456
+
+2、查询数据库服务器中所有数据库
+show databases
+
+3、选中某一个数据库
+use somedatabase
+
+4、查询数据库表中所有数据
+select * from admin
+select * from admin where id = 1
+
+5、退出数据库服务器
+exit
+
+6、数据库服务器中创建数据库
+create database test
+
+7、查看所有表信息
+show tables 
+
+8、创建一个数据表
+create table pet(
+	name varchar(20),
+	owner varchar(20),
+	sex char(1),
+	birth date);
+
+9、查看数据库表结构
+describe user;
+
+10、表中插入数据
+ insert into user values("张三",18,1);
+
+11、MySql数据类型（http://www.runoob.com/mysql/mysql-data-types.html）
+数值
+日期（时间）
+字符串（字符）
+
+12、删除表数据
+delete from user where name ="zhangsan";
+
+13、更新数据
+update user set name="hehe666" where name = "haha";
+
+14、总结
+insert、delete、update、select
+
+15、添加修改删除表结构
+    建表以后给usedr表i添加主键约束
+    alter table user add primary key(id)
+
+    通过修改主键方式
+    alert table user modify id int primary key;
+
+    删除主键
+    alter table user drop primary key
+
+    插入列id,指定类型、主键、自增长
+    alter table user add id int primary key  auto_increment;
+
+
+16、约束条件
+主键约束（primary key）
+    字段不重复且不为空 --> 能够唯一确定一张表中的一条记录，也就是给某个字段添加约束，使得该字段不重复且不为空
+      create table user2(
+            id int primary key,
+            name varchar(20),
+            password varchar(20)
+            );
+
+联合主键  primary key(id, name)
+    单个逐渐特性以及只要联合的主键值加起来不重复就可以
+    create table user3(
+        id int,
+        name varchar(20),
+        password varchar(20),
+        primary key(id, name)
+        );
+
+自增约束（auto_increment）
+    列自动增长
+     create table user2(
+                id int primary key auto_increment,
+                name varchar(20),
+                password varchar(20)
+                );
+唯一约束（unique）
+    修饰的字段值不可以重复
+      alter table user add unique(name)
+    或者：
+      create table user(
+                    id int primary key auto_increment,
+                    name varchar(20) unique,
+                    password varchar(20)
+                    );
+    或者：(类似联合主键，两个建在一起不重复就行)
+      create table user(
+                    id int primary key auto_increment,
+                    name varchar(20),
+                    password varchar(20),
+                     unique(id,name)
+                    );
+    或者：(修改为唯一约束)
+      alter table user modify id int unique;
+    删除唯一约束
+      alter table user drop index id
+
+非空约束（not null）
+    字段不能为空
+
+默认约束（default 10 || default "123"）
+    插入字段值的时候，如果没有转值，就会使用默认值
+
+外键约束( foreign key(class_id) references classes(id))
+    设计两个表：父表、子表
+    主表中没有的数据值，在副表中是不可以使用的
+    主表中的记录被副表引用，主表中的数据是不可以被删除的
+    create table classes(
+        id int primary key,
+        name varchar(20)
+    );
+    create table students(
+        id int primary key,
+        name varchar(20),
+        class_id int,
+        foreign key(class_id) references classes(id)
+    );
+
+
+17、数据库的三大设计范式
+    1、第一范式(1NF)
+        数据表中的所有字段都是不可分割的原子值
+        例如：中国北京市海淀区上地三街中关村发展大厦，（还可以从拆分）==国家、省、城市、街道详情
+        字段值还可以继续拆分，就不满足第一范式
+        范式设计的越详细，对于某些实际操作可能更好，但不一定都是好处，例如还要合并
+    2、第二范式（2NF）
+        必须满足第一范式的前提下，第二范式要求，除主键外的每一列都必须完全依赖于主键
+        如果出现不完全依赖，只可能出现在联合主键的情况下
+        creat table myorder(
+            product_id int,（与product_name有关）
+            customer_id int,（与customer_name有关）
+            product_name varchar(20),
+            customer_name varchar(20),
+            primary key(product_id,customer_id)
+        );
+        问题：
+        除主键外的每一列都必须完全依赖于主键，上例子违反第二范式
+        拆分：
+         creat table myorder(
+                    order_id int primary key,
+                    product_id int,
+                    customer_id int,
+                );
+         creat table product(
+                    id int primary key,
+                    name varchar(20)
+                );
+         creat table customer(
+                    id int primary key,
+                    name varchar(20)
+                );
+        分成三个表后满足第二范式
+
+    3、第三范式（3NF）
+        必须先满足第二范式，除开主键列的其他列之间不能有传递依赖关系
+          creat table myorder(
+                     order_id int primary key,
+                     product_id int,
+                     customer_id int,
+                     customer_phone varchar(20) (与customer_id右依赖关系,将手机号放入消费者表)
+                );
+          拆分：
+            creat table myorder(
+                    order_id int primary key,
+                     product_id int,
+                     customer_id int,
+                );
+           creat table customer(
+                  id int primary key,
+                  name varchar(20),
+                  phone varchar(20)
+              );
+
+18、查询
+查询所有记录
+select * from user
+
+19、查询部分
+select id,name,sex from user
+
+20、去重（distinct）
+select distinct name from user
+
+21、查询区间|范围查询（between ... and ...）
+select * from user where id between 0 and 10;
+select * from user where id >0  and id<10;
+
+22、或者(包含)关系（in）(1或3或5的记录)
+select * from user where id in(1,3,5);
+或者（or）
+select * from user where id = 1 or id = 10;
+
+23、降序
+select * from user order by id desc;
+升序(默认)
+select * from user order by id;
+select * from user order by id asc;
+升序降序
+select * from user order by id asc,name desc;
+
+24、统计（count）
+select count(*) from user where name="666";
+
+25、子查询
+select sno,cno from score where degree=(select max(degree) from score);
+
+26、限制范围(limit（pos，count） pos起始位置，count查询多少条记录)
+select sno,cno,defree from score order by degree desc limit 0,1;
+
+27、平均（avg）
+select age(defree) from score where cno="123"
+select age(defree) from score where cno="456"
+select age(defree) from score where cno="789"
+
+28、分组(group by)按照cno分组后再查询每组中的平均值
+select cno,age(defree) from score group by cno;
+
+29、分组查询后带条件(having)，不是使用where
+select cno,age(defree) from score group by cno
+    having count(cno)>=2 and cno like '3%'';
+
+30、模糊查询（like）
+
+31、多表查询
+select sname,cno,degree from student,score where student.sno=score.sno
+select sname,cno,degree from student,score,degree where student.sno=score.sno and course.cno=score.cno
+
+select cno,age(defree) from score
+    where sno in (select sno from student where class="666")
+    group by cno;
+
+32、日期只取用年份（year）
+select * from student where year(sbirthday)
+    in (select year(sbirthday) from student where sno in (100,102));
+
+33、表示任意（any）如大于至少一个值
+
+34、表示所有（all）
+select * from score where cno="123"
+    and degree> all(select degree from score where cno="456")
+
+35、求并集（union）
+
+36、连接查询（通过相等的值建立关系）
+内连接
+    inner join  或 join（左右相交的椭圆中的交集）
+        两张表中的数据，通过某个字段相等，查询出相关记录数据
+
+外连接（ 或 右连接 ）
+    左外连接left join  或 left outer join （左右相交的椭圆中的左边椭圆 + 交集）
+        会把左边表里的所有数据取出来，而右边表中的数据，如果有相等的，就显示出来，如果没有，就会不NULL
+
+    右外连接right join 或 right outer join（左右相交的椭圆中的右边椭圆 + 交集）
+        与左连接相反
+
+    完全外连接 full join 或者 full outer join （左右相交的椭圆中的左边椭圆 + 右边椭圆 + 交集（全部并集））
+            MySql不支持,可以通过求并集（union）得到
+
+
+37、事务
+    事务其实是一个最小的不可分割的工作单元，事务能够保证一个业务的完整性
+    多条SQL语句，可能会有同时成功的要求，要么就同时失败
+
+    如何控制事务？
+    事务回滚 rollback commit
+
+    开启事务
+    begin；
+    start transaction；
+
+    事务的四大特征
+    A、原子性
+    C、一致性
+    I、隔离性
+    D、持久性
+

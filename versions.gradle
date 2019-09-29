@@ -1,0 +1,208 @@
+/**
+ * 定义addRepos方法根目录仓库
+ */
+def addRepos(RepositoryHandler handler) {
+    handler.google()
+    handler.jcenter()
+    handler.mavenCentral()
+    //Add the JitPack repository
+    handler.maven { url "https://jitpack.io" }
+
+    handler.maven { url "https://plugins.gradle.org/m2/" }
+}
+
+ext.addRepos = this.&addRepos
+
+/**
+ * ***********************************
+ */
+//全局map
+ext.deps = [:]
+
+//版本号map
+def versions = [:]
+versions.android_gradle_plugin = "3.4.1"//根目录下gradle tools plugin
+versions.kotlin = "1.3.31"
+versions.lifecycle_version = "1.1.1"
+versions.room_version = "1.1.1"
+versions.support = "28.0.0"
+versions.multidex = "1.0.3"
+versions.constraint_layout = "1.1.3"
+versions.dagger = "2.22.1"
+versions.glide = "4.8.0"
+versions.rxjava2 = "2.2.8"
+versions.rx_android = "2.1.1"
+versions.retrofit = "2.5.0"
+versions.okhttp = "3.12.2"
+versions.event_bus = "3.1.1"
+versions.photo_view = "2.0.0"
+versions.gson = "2.8.5"
+versions.flow_layout_lib = "1.1.2" //Android流式布局，支持单选、多选等，适合用于产品标签等。
+versions.swipe_recycler = "1.3.2"//带侧滑删除recyclerview
+versions.rxpermissions = "0.10.2"
+versions.utils = "1.23.7"
+versions.toasty = "1.4.2"
+versions.logger = "2.2.0"
+versions.bravh = "2.9.46"
+//不应将com.android.support同时于com.google.android.material在应用中使用和依赖，新的androidx和 com.google.android.material包一起使用
+versions.material_design_androidx = "1.1.0-alpha06"
+versions.kpswitch_lib = "1.6.1"
+versions.android_auto_size = "1.1.2"
+versions.stetho = "1.5.0"
+//测试
+versions.junit = "4.12"
+versions.test_runner = "1.0.2"
+versions.test_espresso = "3.0.2"
+
+versions.picker_view = "4.1.8"
+versions.matisse = "0.5.2-beta4"
+versions.bugly = "latest.release"
+//长图缩放
+versions.subsampling_scale_image_view = "3.10.0"
+versions.paging = "1.0.1"
+
+
+def deps = [:]
+
+def support = [:]
+support.annotations = "com.android.support:support-annotations:$versions.support"
+support.app_compat = "com.android.support:appcompat-v7:$versions.support"
+support.v13 = "com.android.support:support-v13:$versions.support"
+support.percent = "com.android.support:percent:$versions.support"
+support.recyclerview = "com.android.support:recyclerview-v7:$versions.support"
+support.cardview = "com.android.support:cardview-v7:$versions.support"
+support.design = "com.android.support:design:$versions.support"
+support.v4 = "com.android.support:support-v4:$versions.support"
+support.core_utils = "com.android.support:support-core-utils:$versions.support"
+support.multidex = "com.android.support:multidex:$versions.multidex"
+deps.support = support
+
+//材料设计 androidx中使用
+deps.material_androidx = "com.google.android.material：material:$versions.material_design_androidx"
+
+def retrofit = [:]
+retrofit.runtime = "com.squareup.retrofit2:retrofit:$versions.retrofit"
+retrofit.adapter_rxjava2 = "com.squareup.retrofit2:adapter-rxjava2:$versions.retrofit"
+retrofit.gson = "com.squareup.retrofit2:converter-gson:$versions.retrofit"
+deps.retrofit = retrofit
+
+def okhttp = [:]
+okhttp.interceptor = "com.squareup.okhttp3:logging-interceptor:$versions.okhttp"
+deps.okhttp = okhttp
+
+
+def dagger = [:]
+dagger.runtime = "com.google.dagger:dagger:$versions.dagger"
+dagger.android = "com.google.dagger:dagger-android:$versions.dagger"
+dagger.android_support = "com.google.dagger:dagger-android-support:$versions.dagger"
+dagger.compiler = "com.google.dagger:dagger-compiler:$versions.dagger"
+dagger.android_support_compiler = "com.google.dagger:dagger-android-processor:$versions.dagger"
+deps.dagger = dagger
+
+//kotlin
+def kotlin = [:]
+kotlin.stdlib = "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$versions.kotlin"
+kotlin.test = "org.jetbrains.kotlin:kotlin-test-junit:$versions.kotlin"
+kotlin.plugin = "org.jetbrains.kotlin:kotlin-gradle-plugin:$versions.kotlin"
+deps.kotlin = kotlin
+
+
+def lifecycle = [:]
+//https://developer.android.com/jetpack/androidx/releases/lifecycle
+// (lib_common使用)ViewModel and LiveData
+lifecycle.extensions = "android.arch.lifecycle:extensions:$versions.lifecycle_version"
+// alternatively - just ViewModel
+lifecycle.viewmodel = "android.arch.lifecycle:viewmodel:$versions.lifecycle_version"
+// alternatively - just LiveData
+lifecycle.livedata = "android.arch.lifecycle:livedata:$versions.lifecycle_version"
+// alternatively - Lifecycles only (no ViewModel or LiveData). Support library depends on this lightweight import
+lifecycle.runtime = "android.arch.lifecycle:runtime:$versions.lifecycle_version"
+// For Kotlin use kapt instead of annotationProcessor
+lifecycle.compiler = "android.arch.lifecycle:compiler:$versions.lifecycle_version"
+//(lib_common使用) alternately - if using Java8, use the following instead of compiler
+lifecycle.compiler_java8 = "android.arch.lifecycle:common-java8:$versions.lifecycle_version"
+//(lib_common使用) optional - ReactiveStreams support for LiveData
+lifecycle.reactivestreams = "android.arch.lifecycle:reactivestreams:$versions.lifecycle_version"
+//(lib_common使用) optional - Test helpers for LiveData
+lifecycle.livedata_core_testing = "android.arch.core:core-testing:$versions.lifecycle_version"
+deps.lifecycle = lifecycle
+
+
+def room = [:]
+room.runtime = "android.arch.persistence.room:runtime:$versions.room_version"
+//use annotationProcessor 、 For Kotlin use kapt instead of annotationProcessor
+room.compiler = "android.arch.persistence.room:compiler:$versions.room_version"
+// optional - RxJava support for Room
+room.rxjava2 = "android.arch.persistence.room:rxjava2:$versions.room_version"
+// Test helpers、 use testImplementation
+room.testing = "android.arch.persistence.room:testing:$versions.room_version"
+deps.room = room
+
+
+//gradle tools plugin
+deps.android_gradle_plugin = "com.android.tools.build:gradle:$versions.android_gradle_plugin"
+
+//view
+deps.constraint_layout = "com.android.support.constraint:constraint-layout:$versions.constraint_layout"
+deps.flow_layout = "com.zhy:flowlayout-lib:$versions.flow_layout_lib"
+deps.swiperecycler = "com.yanzhenjie.recyclerview:support:$versions.swipe_recycler"
+deps.photo_view = "com.github.chrisbanes:PhotoView:$versions.photo_view"
+deps.kpswitch = "cn.dreamtobe.kpswitch:library:$versions.kpswitch_lib"
+
+
+//recyclerview
+deps.BRAVH = "com.github.CymChad:BaseRecyclerViewAdapterHelper:$versions.bravh"
+
+//rxjava
+deps.rxjava2 = "io.reactivex.rxjava2:rxjava:$versions.rxjava2"
+deps.rx_android = "io.reactivex.rxjava2:rxandroid:$versions.rx_android"
+
+//other
+deps.glide = "com.github.bumptech.glide:glide:$versions.glide"
+deps.glide_compiler = "com.github.bumptech.glide:compiler:$versions.glide"
+//glide okhttp3支持
+deps.glide_integration = "com.github.bumptech.glide:okhttp3-integration:$versions.glide"
+
+deps.event_bus = "org.greenrobot:eventbus:$versions.event_bus"
+deps.persistent_cookie = "com.github.franmontiel:PersistentCookieJar:$versions.persistent_cookie"
+deps.gson = "com.google.code.gson:gson:$versions.gson"
+deps.rxpermissions = "com.github.tbruyelle:rxpermissions:$versions.rxpermissions"
+deps.utils = "com.blankj:utilcode:$versions.utils"
+deps.toasty = "com.github.GrenderG:Toasty:$versions.toasty"
+deps.logger = "com.orhanobut:logger:$versions.logger"
+deps.android_auto_size = "me.jessyan:autosize:$versions.android_auto_size"
+deps.picker_view = "com.contrarywind:Android-PickerView:$versions.picker_view"
+deps.matisse = "com.zhihu.android:matisse:$versions.matisse"
+
+deps.stetho = "com.facebook.stetho:stetho:$versions.stetho"
+deps.stetho_okhttp3 = "com.facebook.stetho:stetho-okhttp3:$versions.stetho"
+
+deps.bugly = "com.tencent.bugly:crashreport:$versions.bugly"
+deps.bugly_ndk = "com.tencent.bugly:nativecrashreport:$versions.bugly"
+
+//类似库 api 'com.shizhefei:LargeImageView:1.1.0'  api 'me.kareluo.intensify:image:1.1.0'
+deps.subsamplingScaleImageView = "com.davemorrissey.labs:subsampling-scale-image-view:$versions.subsampling_scale_image_view"
+
+//paging
+deps.paging = "android.arch.paging:runtime:$versions.paging"
+deps.paging_common = "android.arch.paging:common:$versions.paging"
+deps.paging_rxjava2 = "android.arch.paging:rxjava2:$versions.paging"
+
+//test
+deps.junit = "junit:junit:$versions.junit"
+deps.test_runner = "com.android.support.test:runner:$versions.test_runner"
+deps.test_espresso = "com.android.support.test.espresso:espresso-core:$versions.test_espresso"
+
+
+ext.deps = deps
+
+/**
+ * 最小版本、目标版本、编译工具版本
+ */
+def build_versions = [:]
+build_versions.min_sdk = 18
+build_versions.target_sdk = 28
+build_versions.build_tools = "28.0.0"
+
+ext.build_versions = build_versions
+
